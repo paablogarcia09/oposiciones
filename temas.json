@@ -4,14 +4,17 @@
     "titulo": "La Constitución Española de 1978. Características y estructura.",
     "indice": [
       { "num": "1", "texto": "Introducción" },
-      { "num": "2", "texto": "Características de la Constitución" },
-      { "num": "2.1", "texto": "Antecedentes históricos" },
-      { "num": "2.2", "texto": "Principios generales" },
-      { "num": "3", "texto": "Estructura y contenido" },
-      { "num": "3.1", "texto": "El preámbulo" },
-      { "num": "3.2", "texto": "El articulado" },
-      { "num": "3.3", "texto": "Las disposiciones" },
-      { "num": "4", "texto": "Conclusión" }
+      { "num": "2", "texto": "Información" },
+      { "num": "3", "texto": "Sistemas de numeración" },
+      { "num": "3.1", "texto": "Sistema decimal" },
+      { "num": "3.2", "texto": "Sistema binario" },
+      { "num": "3.3", "texto": "Sistema octal" },
+      { "num": "3.4", "texto": "Sistema hexadecimal" },
+      { "num": "4", "texto": "Representación de la información" },
+      { "num": "4.1", "texto": "Representación en formatos para el ser humano" },
+      { "num": "4.2", "texto": "Representación interna en un computador" },
+      { "num": "5", "texto": "Comunicación de la información" },
+      { "num": "6", "texto": "Bibliografía" }
     ]
   },
   {
