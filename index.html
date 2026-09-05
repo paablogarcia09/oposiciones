@@ -2,48 +2,63 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Repaso de Índices - Oposiciones</title>
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; padding: 20px; background-color: #f4f4f9; }
-    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .topic-list { height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-    button { background-color: #0366d6; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; }
-    button:hover { background-color: #005cc5; }
-    .hidden { display: none; }
-    .correct { color: #1e7e34; background: #d4edda; padding: 8px; border-radius: 4px; margin: 5px 0; }
-    .incorrect { color: #dc3545; background: #f8d7da; padding: 8px; border-radius: 4px; margin: 5px 0; }
-    
-    /* NUEVOS ESTILOS PARA EL ÍNDICE */
-    .fila-indice { display: flex; align-items: center; margin-bottom: 10px; }
-    .numeracion { font-weight: bold; margin-right: 10px; min-width: 40px; text-align: right; color: #0366d6; font-size: 16px; }
-    .input-punto { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
-    .input-punto:focus { border-color: #0366d6; outline: none; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fichero de Índices · Repaso de Oposición</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Simulador de Índices 📚</h1>
-    
-    <h3>1. Selecciona los temas a repasar</h3>
-    <div id="lista-temas" class="topic-list"></div>
-    <button id="btn-sortear">🎲 Sortear Tema Aleatorio</button>
-    
-    <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
-    
-    <div id="zona-estudio" class="hidden">
-      <h2 id="tema-elegido" style="color: #0366d6;"></h2>
-      
-      <h3>2. Completa el índice</h3>
-      <p style="font-size: 0.9em; color: #666;">Rellena el texto correspondiente a cada apartado.</p>
-      
-      <!-- Aquí aparecerán las cajitas mágicamente -->
-      <div id="contenedor-inputs"></div>
-      
-      <br>
-      <button id="btn-validar">✔️ Validar Índice</button>
-    </div>
-    
-    <div id="resultado" style="margin-top: 20px;"></div>
+  <div class="wrap">
+
+    <header class="masthead">
+      <div class="kicker mono">FICHERO DE REPASO</div>
+      <h1>Índices del temario</h1>
+    </header>
+
+    <!-- Selección de temas -->
+    <section class="card">
+      <hr class="rule-top">
+      <h3>Nº 1 — Selecciona los temas a repasar</h3>
+
+      <div class="topic-toolbar">
+        <button id="btn-todos" class="link-btn">marcar todos</button>
+        <button id="btn-ninguno" class="link-btn">marcar ninguno</button>
+      </div>
+
+      <div id="lista-temas" class="topic-list"></div>
+
+      <div class="btn-row" style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+        <button id="btn-sortear" class="stamp-btn">🎲 Sortear tema</button>
+        <button id="btn-stats" class="plain-btn">📊 Ver estadísticas</button>
+      </div>
+    </section>
+
+    <!-- Panel de estadísticas -->
+    <section id="panel-stats" class="card hidden">
+      <hr class="rule-top">
+      <h3>Nº 2 — Tu historial de repaso</h3>
+      <div id="stats-global" class="stats-global"></div>
+      <div id="stats-tabla"></div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button id="btn-reset-stats" class="link-btn">borrar todas las estadísticas</button>
+      </div>
+    </section>
+
+    <!-- Zona de estudio -->
+    <section id="zona-estudio" class="card hidden">
+      <hr class="rule-top">
+      <h3 id="tema-numero">Nº — Reconstruye el índice</h3>
+      <div class="tema-titulo" id="tema-titulo"></div>
+      <div class="tema-meta mono" id="tema-meta"></div>
+
+      <div id="renglones" class="renglones"></div>
+
+      <div class="btn-row" style="margin-top:20px;">
+        <button id="btn-validar" class="stamp-btn">✔️ Validar índice</button>
+      </div>
+
+      <div id="resumen" class="resumen"></div>
+    </section>
+
   </div>
 
   <script src="app.js"></script>
