@@ -1,7 +1,7 @@
 let temas = [];
 let temaActual = null;
 
-// 1. Cargar el archivo JSON al abrir la página
+// Cargar el JSON
 fetch('temas.json')
   .then(respuesta => respuesta.json())
   .then(datos => {
@@ -9,7 +9,6 @@ fetch('temas.json')
     cargarCheckboxes();
   });
 
-// 2. Mostrar la lista de temas con casillas (checkboxes)
 function cargarCheckboxes() {
   const contenedor = document.getElementById('lista-temas');
   temas.forEach(tema => {
@@ -17,69 +16,64 @@ function cargarCheckboxes() {
     etiqueta.style.display = 'block';
     etiqueta.style.marginBottom = '5px';
     etiqueta.style.cursor = 'pointer';
-    
-    // Por defecto marcamos todos
-    etiqueta.innerHTML = `<input type="checkbox" value="${tema.id}" checked> 
-                          Tema ${tema.id}: ${tema.titulo}`;
+    etiqueta.innerHTML = `<input type="checkbox" value="${tema.id}" checked> Tema ${tema.id}: ${tema.titulo}`;
     contenedor.appendChild(etiqueta);
   });
 }
 
-// 3. Lógica para sortear un tema
+// Sortear y crear las cajitas dinámicas
 document.getElementById('btn-sortear').addEventListener('click', () => {
-  // Ver qué casillas están marcadas
   const checkboxes = document.querySelectorAll('#lista-temas input[type="checkbox"]:checked');
   const idsSeleccionados = Array.from(checkboxes).map(cb => parseInt(cb.value));
   
-  if (idsSeleccionados.length === 0) {
-    alert("¡Debes seleccionar al menos un tema para el sorteo!");
-    return;
-  }
+  if (idsSeleccionados.length === 0) return alert("¡Selecciona al menos un tema!");
   
-  // Filtrar y elegir al azar
   const temasFiltrados = temas.filter(t => idsSeleccionados.includes(t.id));
-  const indiceAzar = Math.floor(Math.random() * temasFiltrados.length);
-  temaActual = temasFiltrados[indiceAzar];
+  temaActual = temasFiltrados[Math.floor(Math.random() * temasFiltrados.length)];
   
-  // Mostrar la zona de estudio
   document.getElementById('tema-elegido').innerText = `Tema ${temaActual.id}: ${temaActual.titulo}`;
   document.getElementById('zona-estudio').classList.remove('hidden');
-  
-  // Limpiar intentos anteriores
-  document.getElementById('input-indice').value = '';
   document.getElementById('resultado').innerHTML = '';
+  
+  // Limpiar y crear el nuevo esqueleto del índice
+  const contenedorInputs = document.getElementById('contenedor-inputs');
+  contenedorInputs.innerHTML = '';
+  
+  temaActual.indice.forEach((punto) => {
+    // Expresión regular para separar el número (ej: "2.1.") del texto ("Introducción")
+    const coincidencia = punto.match(/^([\d\.]+[-)]?)\s*(.*)/);
+    const numeracion = coincidencia ? coincidencia[1] : "•"; 
+    const textoReal = coincidencia ? coincidencia[2] : punto;
+
+    const divFila = document.createElement('div');
+    divFila.className = 'fila-indice';
+    divFila.innerHTML = `
+      <span class="numeracion">${numeracion}</span>
+      <input type="text" class="input-punto" data-respuesta="${textoReal}" placeholder="...">
+    `;
+    contenedorInputs.appendChild(divFila);
+  });
 });
 
-// 4. Lógica para validar tu respuesta
+// Validar cada cajita
 document.getElementById('btn-validar').addEventListener('click', () => {
-  // Separamos lo que has escrito por saltos de línea y quitamos líneas vacías
-  const textoUsuario = document.getElementById('input-indice').value;
-  const lineasUsuario = textoUsuario.split('\n').map(l => l.trim()).filter(l => l !== '');
-  const indiceReal = temaActual.indice;
-  
   let htmlResultado = '<h3>Resultado de tu corrección:</h3>';
+  const filas = document.querySelectorAll('.fila-indice');
   
-  // Función para normalizar texto (quita tildes, comas, puntos y lo pasa a minúsculas)
-  // Así el sistema te da por bueno "1 introduccion" aunque el original sea "1. Introducción"
-  const simplificar = (texto) => {
-    return texto.toLowerCase()
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita tildes
-                .replace(/[^a-z0-9\s]/g, "") // Quita puntos y comas
-                .trim();
-  };
+  const simplificar = (texto) => texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s]/g, "").trim();
 
-  indiceReal.forEach((puntoReal, i) => {
-    const realSimplificado = simplificar(puntoReal);
-    const usuarioOriginal = lineasUsuario[i] || "";
-    const usuarioSimplificado = simplificar(usuarioOriginal);
+  filas.forEach((fila) => {
+    const input = fila.querySelector('.input-punto');
+    const numeracion = fila.querySelector('.numeracion').innerText;
+    const textoUsuario = input.value;
+    const textoReal = input.getAttribute('data-respuesta'); // Lo que deberías haber escrito
     
-    // Si tu línea contiene las mismas palabras clave (aprox) que la real
-    if (usuarioSimplificado === realSimplificado) {
-      htmlResultado += `<div class="correct">✅ <strong>¡Perfecto!</strong> ${puntoReal}</div>`;
+    if (simplificar(textoUsuario) === simplificar(textoReal)) {
+      htmlResultado += `<div class="correct">✅ <strong>¡Perfecto!</strong> ${numeracion} ${textoReal}</div>`;
     } else {
-      htmlResultado += `<div class="incorrect">❌ <strong>Error en este punto.</strong><br>
-                        Era: <em>${puntoReal}</em><br>
-                        Tú escribiste: <em>${usuarioOriginal || '(Lo dejaste en blanco)'}</em></div>`;
+      htmlResultado += `<div class="incorrect">❌ <strong>Error.</strong><br>
+                        Era: <em>${numeracion} ${textoReal}</em><br>
+                        Tú escribiste: <em>${numeracion} ${textoUsuario || '(Lo dejaste en blanco)'}</em></div>`;
     }
   });
   
