@@ -1,26 +1,34 @@
 [
   {
     "id": 1,
-    "titulo": "Representación y comunicación de la información",
+    "titulo": "La Constitución Española de 1978. Características y estructura.",
     "indice": [
-      "1. Introducción",
-      "2. Información",
-      "3. Sistemas de numeración",
-      "4. Representación de la información",
-      "5. Comunicación de la información",
-      "6. Conclusiones",
-      "7. Bibliografía"
+      { "num": "1", "texto": "Introducción" },
+      { "num": "2", "texto": "Características de la Constitución" },
+      { "num": "2.1", "texto": "Antecedentes históricos" },
+      { "num": "2.2", "texto": "Principios generales" },
+      { "num": "3", "texto": "Estructura y contenido" },
+      { "num": "3.1", "texto": "El preámbulo" },
+      { "num": "3.2", "texto": "El articulado" },
+      { "num": "3.3", "texto": "Las disposiciones" },
+      { "num": "4", "texto": "Conclusión" }
     ]
   },
   {
     "id": 2,
     "titulo": "Las Cortes Generales. Composición y funciones.",
     "indice": [
-      "1. Introducción",
-      "2. El Congreso de los Diputados",
-      "3. El Senado",
-      "4. Funciones de las Cortes",
-      "5. Conclusión"
+      { "num": "1", "texto": "Introducción" },
+      { "num": "2", "texto": "El Congreso de los Diputados" },
+      { "num": "2.1", "texto": "Composición" },
+      { "num": "2.2", "texto": "Elección de sus miembros" },
+      { "num": "3", "texto": "El Senado" },
+      { "num": "3.1", "texto": "Composición" },
+      { "num": "3.2", "texto": "Elección de sus miembros" },
+      { "num": "4", "texto": "Funciones de las Cortes" },
+      { "num": "4.1", "texto": "Función legislativa" },
+      { "num": "4.2", "texto": "Función de control" },
+      { "num": "5", "texto": "Conclusión" }
     ]
   }
 ]

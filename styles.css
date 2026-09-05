@@ -250,7 +250,8 @@ body {
   font-family: 'Courier Prime', monospace;
   font-size: 0.85rem;
   color: var(--ink-soft);
-  flex: 0 0 20px;
+  flex: 0 0 auto;
+  min-width: 20px;
 }
 
 .renglon input[type="text"] {
@@ -284,6 +285,30 @@ body {
   color: var(--ink-red);
   padding: 0 0 4px 30px;
   margin-top: -2px;
+}
+
+/* ---- Diff letra a letra ---- */
+.letras-echo {
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  padding: 4px 0 2px 30px;
+  word-break: break-word;
+}
+.letra-ok {
+  color: var(--ink-green);
+}
+.letra-bad {
+  color: var(--ink-red);
+  text-decoration: underline;
+  text-decoration-color: rgba(166, 61, 64, 0.5);
+}
+.letra-falta {
+  color: var(--card-edge);
+  letter-spacing: 0.08em;
+}
+.letras-vacio {
+  color: var(--ink-soft);
+  font-style: italic;
 }
 
 /* ---- Result summary ---- */

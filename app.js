@@ -112,12 +112,14 @@ function mostrarZonaEstudio(tema) {
   const contenedor = document.getElementById('renglones');
   contenedor.innerHTML = '';
 
-  tema.indice.forEach((_, i) => {
+  tema.indice.forEach((punto, i) => {
+    const nivel = (punto.num.match(/\./g) || []).length; // 0 = epígrafe principal
     const fila = document.createElement('div');
     fila.className = 'renglon';
+    fila.style.marginLeft = `${nivel * 22}px`;
     fila.innerHTML = `
-      <span class="renglon-num mono">${i + 1}.</span>
-      <input type="text" class="input-punto" data-idx="${i}" autocomplete="off" placeholder="Punto ${i + 1}...">
+      <span class="renglon-num mono">${punto.num}.</span>
+      <input type="text" class="input-punto" data-idx="${i}" autocomplete="off" placeholder="Punto ${punto.num}...">
       <span class="stamp-mark" data-idx="${i}"></span>
     `;
     contenedor.appendChild(fila);
@@ -144,12 +146,39 @@ function mostrarZonaEstudio(tema) {
    Validar
 --------------------------------------------------------- */
 function simplificar(texto) {
-  return texto
-    .replace(/^\s*\d+\s*[.)\-]?\s*/, '') // quita numeración inicial tipo "1." o "1)"
-    .toLowerCase()
+  return texto.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, ' ')
     .trim();
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Compara letra a letra (por posición) lo que has escrito con el texto real.
+// Devuelve el HTML de tu intento coloreado y cuántas letras acertaste.
+function compararLetras(usuario, real) {
+  const a = simplificar(usuario);
+  const b = simplificar(real);
+
+  if (a.length === 0) {
+    return { html: '<span class="letras-vacio">(lo dejaste en blanco)</span>', correctas: 0, total: b.length };
+  }
+
+  let html = '';
+  let correctas = 0;
+  for (let i = 0; i < a.length; i++) {
+    const ok = i < b.length && a[i] === b[i];
+    if (ok) correctas++;
+    html += `<span class="${ok ? 'letra-ok' : 'letra-bad'}">${escapeHtml(a[i])}</span>`;
+  }
+  const faltan = b.length - a.length;
+  if (faltan > 0) {
+    html += `<span class="letra-falta">${'▢'.repeat(Math.min(faltan, 20))}</span>`;
+  }
+  return { html, correctas, total: b.length };
 }
 
 document.getElementById('btn-validar').addEventListener('click', () => {
@@ -157,42 +186,61 @@ document.getElementById('btn-validar').addEventListener('click', () => {
 
   const indiceReal = temaActual.indice;
   let aciertos = 0;
-  let correccionesHtml = '';
+  let letrasCorrectas = 0;
+  let letrasTotal = 0;
 
-  indiceReal.forEach((puntoReal, i) => {
-    const input = document.querySelector(`.input-punto[data-idx="${i}"]`);
-    const marca = document.querySelector(`.stamp-mark[data-idx="${i}"]`);
+  indiceReal.forEach((punto, i) => {
+    const puntoReal = punto.texto;
+    const fila = document.querySelector(`.input-punto[data-idx="${i}"]`).closest('.renglon');
+    const input = fila.querySelector('.input-punto');
+    const marca = fila.querySelector('.stamp-mark');
     const valorUsuario = input.value;
 
     const esCorrecto = simplificar(valorUsuario) === simplificar(puntoReal);
 
-    // Quitar anotación previa de esta fila, si la había
-    const anotacionPrevia = input.closest('.renglon').nextElementSibling;
-    if (anotacionPrevia && anotacionPrevia.classList.contains('correccion')) {
-      anotacionPrevia.remove();
+    // Quitar anotaciones previas de esta fila (diff de letras + revelación), si las había
+    let hermano = fila.nextElementSibling;
+    while (hermano && (hermano.classList.contains('correccion') || hermano.classList.contains('letras-echo'))) {
+      const siguiente = hermano.nextElementSibling;
+      hermano.remove();
+      hermano = siguiente;
     }
 
     if (esCorrecto) {
       aciertos++;
+      letrasCorrectas += simplificar(puntoReal).length;
+      letrasTotal += simplificar(puntoReal).length;
       marca.textContent = '✓';
       marca.className = 'stamp-mark ok';
     } else {
       marca.textContent = '✗';
       marca.className = 'stamp-mark bad';
+
+      const diff = compararLetras(valorUsuario, puntoReal);
+      letrasCorrectas += diff.correctas;
+      letrasTotal += diff.total;
+
+      const echo = document.createElement('div');
+      echo.className = 'letras-echo mono';
+      echo.innerHTML = diff.html;
+      fila.insertAdjacentElement('afterend', echo);
+
       const nota = document.createElement('div');
       nota.className = 'correccion';
-      nota.textContent = `era: ${puntoReal}`;
-      input.closest('.renglon').insertAdjacentElement('afterend', nota);
+      nota.textContent = `era: ${punto.num}. ${puntoReal}`;
+      echo.insertAdjacentElement('afterend', nota);
     }
   });
 
   const total = indiceReal.length;
   const pct = total === 0 ? 0 : Math.round((aciertos / total) * 100);
+  const pctLetras = letrasTotal === 0 ? 0 : Math.round((letrasCorrectas / letrasTotal) * 100);
   const stats = registrarIntento(temaActual.id, aciertos, total);
 
   const resumen = document.getElementById('resumen');
   resumen.innerHTML = `
-    <div class="puntuacion ${pct >= 70 ? 'ok' : 'bad'}">${aciertos} / ${total} correctos · ${pct}%</div>
+    <div class="puntuacion ${pct >= 70 ? 'ok' : 'bad'}">${aciertos} / ${total} epígrafes exactos · ${pct}%</div>
+    <p>Letras acertadas: ${letrasCorrectas} / ${letrasTotal} (${pctLetras}%). En verde, lo que ya tenías bien — solo hace falta corregir lo rojo.</p>
     <p>Mejor marca en este tema: ${stats.mejor_pct}% (${stats.intentos} intento${stats.intentos === 1 ? '' : 's'} en total).</p>
   `;
 
