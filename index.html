@@ -1,1 +1,47 @@
-<h1>¡Bienvenidos a mi proyecto!</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Repaso de Índices - Oposiciones</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; padding: 20px; background-color: #f4f4f9; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .topic-list { height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    textarea { width: 100%; height: 200px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+    button { background-color: #0366d6; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #005cc5; }
+    .hidden { display: none; }
+    .correct { color: #1e7e34; background: #d4edda; padding: 8px; border-radius: 4px; margin: 5px 0; }
+    .incorrect { color: #dc3545; background: #f8d7da; padding: 8px; border-radius: 4px; margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Simulador de Índices 📚</h1>
+    
+    <h3>1. Selecciona los temas a repasar</h3>
+    <div id="lista-temas" class="topic-list">
+      <!-- Los temas se cargarán aquí automáticamente -->
+    </div>
+    
+    <button id="btn-sortear">🎲 Sortear Tema Aleatorio</button>
+    
+    <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+    
+    <div id="zona-estudio" class="hidden">
+      <h2 id="tema-elegido" style="color: #0366d6;"></h2>
+      
+      <h3>2. Escribe el índice</h3>
+      <p style="font-size: 0.9em; color: #666;">Escribe un punto del índice por cada línea. No te preocupes por tildes o mayúsculas.</p>
+      <textarea id="input-indice" placeholder="Ej: 1. Introducción..."></textarea>
+      
+      <br><br>
+      <button id="btn-validar">✔️ Validar Índice</button>
+    </div>
+    
+    <div id="resultado" style="margin-top: 20px;"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
