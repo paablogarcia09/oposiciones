@@ -260,12 +260,38 @@ body {
   background: transparent;
   font-family: 'Source Serif 4', serif;
   font-size: 1rem;
-  color: var(--ink);
   padding: 2px 0;
   outline: none;
+  color: transparent;
+  caret-color: var(--ink);
+  position: relative;
+  z-index: 1;
+}
+.renglon input[type="text"]::placeholder {
+  color: var(--ink-soft);
+  opacity: 0.65;
 }
 .renglon input[type="text"]:focus {
   box-shadow: 0 2px 0 0 var(--focus);
+}
+
+.input-wrap {
+  position: relative;
+  flex: 1;
+}
+
+.input-highlight {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  font-family: 'Source Serif 4', serif;
+  font-size: 1rem;
+  line-height: normal;
+  padding: 2px 0;
+  white-space: pre;
+  overflow: hidden;
+  color: var(--ink);
 }
 
 .stamp-mark {
@@ -283,17 +309,17 @@ body {
   font-family: 'Caveat', cursive;
   font-size: 1.25rem;
   color: var(--ink-red);
-  padding: 0 0 4px 30px;
-  margin-top: -2px;
+  padding: 4px 0 4px 30px;
 }
 
-/* ---- Diff letra a letra ---- */
-.letras-echo {
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  padding: 4px 0 2px 30px;
-  word-break: break-word;
+.solucion-row {
+  padding: 2px 0 4px 30px;
 }
+.solucion-row .btn-solucion {
+  font-size: 0.72rem;
+}
+
+/* ---- Resaltado en vivo (letras acertadas) ---- */
 .letra-ok {
   color: var(--ink-green);
 }
@@ -301,14 +327,6 @@ body {
   color: var(--ink-red);
   text-decoration: underline;
   text-decoration-color: rgba(166, 61, 64, 0.5);
-}
-.letra-falta {
-  color: var(--card-edge);
-  letter-spacing: 0.08em;
-}
-.letras-vacio {
-  color: var(--ink-soft);
-  font-style: italic;
 }
 
 /* ---- Result summary ---- */

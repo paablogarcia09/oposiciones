@@ -119,10 +119,22 @@ function mostrarZonaEstudio(tema) {
     fila.style.marginLeft = `${nivel * 22}px`;
     fila.innerHTML = `
       <span class="renglon-num mono">${punto.num}.</span>
-      <input type="text" class="input-punto" data-idx="${i}" autocomplete="off" placeholder="Punto ${punto.num}...">
+      <div class="input-wrap">
+        <div class="input-highlight mono" data-idx="${i}" aria-hidden="true"></div>
+        <input type="text" class="input-punto" data-idx="${i}" autocomplete="off" placeholder="Punto ${punto.num}...">
+      </div>
       <span class="stamp-mark" data-idx="${i}"></span>
     `;
     contenedor.appendChild(fila);
+  });
+
+  // Resaltado en vivo: colorea las letras acertadas mientras escribes
+  contenedor.querySelectorAll('.input-punto').forEach((input, idx) => {
+    const puntoReal = tema.indice[idx].texto;
+    const highlight = contenedor.querySelector(`.input-highlight[data-idx="${idx}"]`);
+    input.addEventListener('input', () => {
+      highlight.innerHTML = resaltarEnVivo(input.value, puntoReal);
+    });
   });
 
   // Enter avanza al siguiente renglón
@@ -143,7 +155,7 @@ function mostrarZonaEstudio(tema) {
 }
 
 /* ---------------------------------------------------------
-   Validar
+   Comparación de texto
 --------------------------------------------------------- */
 function simplificar(texto) {
   return texto.toLowerCase()
@@ -157,30 +169,37 @@ function escapeHtml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-// Compara letra a letra (por posición) lo que has escrito con el texto real.
-// Devuelve el HTML de tu intento coloreado y cuántas letras acertaste.
-function compararLetras(usuario, real) {
-  const a = simplificar(usuario);
-  const b = simplificar(real);
-
-  if (a.length === 0) {
-    return { html: '<span class="letras-vacio">(lo dejaste en blanco)</span>', correctas: 0, total: b.length };
-  }
-
-  let html = '';
-  let correctas = 0;
-  for (let i = 0; i < a.length; i++) {
-    const ok = i < b.length && a[i] === b[i];
-    if (ok) correctas++;
-    html += `<span class="${ok ? 'letra-ok' : 'letra-bad'}">${escapeHtml(a[i])}</span>`;
-  }
-  const faltan = b.length - a.length;
-  if (faltan > 0) {
-    html += `<span class="letra-falta">${'▢'.repeat(Math.min(faltan, 20))}</span>`;
-  }
-  return { html, correctas, total: b.length };
+// Normaliza un único carácter para comparar ignorando tildes y mayúsculas
+function normalizarChar(ch) {
+  return ch.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
+// Genera el HTML coloreado que se superpone sobre el input mientras escribes.
+// Compara carácter a carácter (por posición) contra el texto real.
+function resaltarEnVivo(valorUsuario, textoReal) {
+  let html = '';
+  for (let i = 0; i < valorUsuario.length; i++) {
+    const ch = valorUsuario[i];
+    const ok = i < textoReal.length && normalizarChar(ch) === normalizarChar(textoReal[i]);
+    html += `<span class="${ok ? 'letra-ok' : 'letra-bad'}">${escapeHtml(ch)}</span>`;
+  }
+  return html;
+}
+
+// Para las estadísticas agregadas: cuántas letras (sobre el texto simplificado) coinciden
+function contarLetrasAcertadas(usuario, real) {
+  const a = simplificar(usuario);
+  const b = simplificar(real);
+  let correctas = 0;
+  for (let i = 0; i < a.length && i < b.length; i++) {
+    if (a[i] === b[i]) correctas++;
+  }
+  return { correctas, total: b.length };
+}
+
+/* ---------------------------------------------------------
+   Validar
+--------------------------------------------------------- */
 document.getElementById('btn-validar').addEventListener('click', () => {
   if (!temaActual) return;
 
@@ -198,37 +217,44 @@ document.getElementById('btn-validar').addEventListener('click', () => {
 
     const esCorrecto = simplificar(valorUsuario) === simplificar(puntoReal);
 
-    // Quitar anotaciones previas de esta fila (diff de letras + revelación), si las había
-    let hermano = fila.nextElementSibling;
-    while (hermano && (hermano.classList.contains('correccion') || hermano.classList.contains('letras-echo'))) {
-      const siguiente = hermano.nextElementSibling;
-      hermano.remove();
-      hermano = siguiente;
+    // Quitar la fila de "mostrar solución" de un intento anterior, si la había
+    const siguiente = fila.nextElementSibling;
+    if (siguiente && siguiente.classList.contains('solucion-row')) {
+      siguiente.remove();
     }
+
+    const letras = contarLetrasAcertadas(valorUsuario, puntoReal);
+    letrasCorrectas += letras.correctas;
+    letrasTotal += letras.total;
 
     if (esCorrecto) {
       aciertos++;
-      letrasCorrectas += simplificar(puntoReal).length;
-      letrasTotal += simplificar(puntoReal).length;
       marca.textContent = '✓';
       marca.className = 'stamp-mark ok';
     } else {
       marca.textContent = '✗';
       marca.className = 'stamp-mark bad';
 
-      const diff = compararLetras(valorUsuario, puntoReal);
-      letrasCorrectas += diff.correctas;
-      letrasTotal += diff.total;
+      const solRow = document.createElement('div');
+      solRow.className = 'solucion-row';
 
-      const echo = document.createElement('div');
-      echo.className = 'letras-echo mono';
-      echo.innerHTML = diff.html;
-      fila.insertAdjacentElement('afterend', echo);
+      const btnSol = document.createElement('button');
+      btnSol.type = 'button';
+      btnSol.className = 'link-btn btn-solucion';
+      btnSol.textContent = 'mostrar solución';
 
-      const nota = document.createElement('div');
-      nota.className = 'correccion';
-      nota.textContent = `era: ${punto.num}. ${puntoReal}`;
-      echo.insertAdjacentElement('afterend', nota);
+      const notaSol = document.createElement('div');
+      notaSol.className = 'correccion hidden';
+      notaSol.textContent = `${punto.num}. ${puntoReal}`;
+
+      btnSol.addEventListener('click', () => {
+        const oculto = notaSol.classList.toggle('hidden');
+        btnSol.textContent = oculto ? 'mostrar solución' : 'ocultar solución';
+      });
+
+      solRow.appendChild(btnSol);
+      solRow.appendChild(notaSol);
+      fila.insertAdjacentElement('afterend', solRow);
     }
   });
 
@@ -240,7 +266,7 @@ document.getElementById('btn-validar').addEventListener('click', () => {
   const resumen = document.getElementById('resumen');
   resumen.innerHTML = `
     <div class="puntuacion ${pct >= 70 ? 'ok' : 'bad'}">${aciertos} / ${total} epígrafes exactos · ${pct}%</div>
-    <p>Letras acertadas: ${letrasCorrectas} / ${letrasTotal} (${pctLetras}%). En verde, lo que ya tenías bien — solo hace falta corregir lo rojo.</p>
+    <p>Letras acertadas: ${letrasCorrectas} / ${letrasTotal} (${pctLetras}%).</p>
     <p>Mejor marca en este tema: ${stats.mejor_pct}% (${stats.intentos} intento${stats.intentos === 1 ? '' : 's'} en total).</p>
   `;
 
