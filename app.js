@@ -134,6 +134,11 @@ function mostrarZonaEstudio(tema) {
     const highlight = contenedor.querySelector(`.input-highlight[data-idx="${idx}"]`);
     input.addEventListener('input', () => {
       highlight.innerHTML = resaltarEnVivo(input.value, puntoReal);
+      highlight.scrollLeft = input.scrollLeft;
+    });
+    // Si el texto no cabe y el input hace scroll horizontal (con las flechas, etc.)
+    input.addEventListener('scroll', () => {
+      highlight.scrollLeft = input.scrollLeft;
     });
   });
 
