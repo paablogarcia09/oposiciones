@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "titulo": "La Constitución Española de 1978. Características y estructura.",
+    "titulo": "Representación y comunicación de la información.",
     "indice": [
       { "num": "1", "texto": "Introducción" },
       { "num": "2", "texto": "Información" },
@@ -45,6 +45,38 @@
       { "num": "7.5", "texto": "Sistemas operativos para dispositivos móviles" },
       { "num": "8", "texto": "Conclusión" },
       { "num": "9", "texto": "Bibliografía" }
+    ]
+  },
+  {
+    "id": 12,
+    "titulo": "Organización lógica de los datos. Estructuras dinámicas.",
+    "indice": [
+      { "num": "1", "texto": "Introducción" },
+      { "num": "2", "texto": "Organización lógica de los datos" },
+      { "num": "2.1", "texto": "Concepto" },
+      { "num": "2.2", "texto": "Tipos" },
+      { "num": "3", "texto": "Listas" },
+      { "num": "4", "texto": "Pilas" },
+      { "num": "5", "texto": "Colas" },
+      { "num": "6", "texto": "Árboles" },
+      { "num": "6.1", "texto": "Definición" },
+      { "num": "6.2", "texto": "Características y estructura" },
+      { "num": "6.3", "texto": "Tipos de árboles" },
+      { "num": "6.4", "texto": "Recorridos sobre un árbol" },
+      { "num": "6.5", "texto": "Otras operaciones sobre un árboles" },
+      { "num": "6.6", "texto": "Almacenamiento de un árbol" },
+      { "num": "7", "texto": "Árboles binarios" },
+      { "num": "7.1", "texto": "Definición" },
+      { "num": "7.2", "texto": "Características" },
+      { "num": "7.3", "texto": "Árboles binarios completos" },
+      { "num": "7.4", "texto": "Conversión de un árbol general a un árbol binario" },
+      { "num": "7.5", "texto": "Representación de los árboles binarios" },
+      { "num": "7.6", "texto": "Recorridos" },
+      { "num": "7.7", "texto": "Árboles binarios de búsqueda" },
+      { "num": "8", "texto": "Grafos" },
+      { "num": "8.1", "texto": "Definición" },
+      { "num": "8.2", "texto": "Tipos de grafos" },
+      { "num": "8.3", "texto": "Representación de los grafos" }
     ]
   }
 ]
