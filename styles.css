@@ -262,10 +262,8 @@ body {
   font-size: 1rem;
   padding: 2px 0;
   outline: none;
-  color: transparent;
+  color: var(--ink);
   caret-color: var(--ink);
-  position: relative;
-  z-index: 1;
 }
 .renglon input[type="text"]::placeholder {
   color: var(--ink-soft);
@@ -273,25 +271,6 @@ body {
 }
 .renglon input[type="text"]:focus {
   box-shadow: 0 2px 0 0 var(--focus);
-}
-
-.input-wrap {
-  position: relative;
-  flex: 1;
-}
-
-.input-highlight {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  font-family: 'Source Serif 4', serif;
-  font-size: 1rem;
-  line-height: normal;
-  padding: 2px 0;
-  white-space: pre;
-  overflow: hidden;
-  color: var(--ink);
 }
 
 .stamp-mark {
@@ -317,16 +296,6 @@ body {
 }
 .solucion-row .btn-solucion {
   font-size: 0.72rem;
-}
-
-/* ---- Resaltado en vivo (letras acertadas) ---- */
-.letra-ok {
-  color: var(--ink-green);
-}
-.letra-bad {
-  color: var(--ink-red);
-  text-decoration: underline;
-  text-decoration-color: rgba(166, 61, 64, 0.5);
 }
 
 /* ---- Result summary ---- */

@@ -119,27 +119,10 @@ function mostrarZonaEstudio(tema) {
     fila.style.marginLeft = `${nivel * 22}px`;
     fila.innerHTML = `
       <span class="renglon-num mono">${punto.num}.</span>
-      <div class="input-wrap">
-        <div class="input-highlight mono" data-idx="${i}" aria-hidden="true"></div>
-        <input type="text" class="input-punto" data-idx="${i}" autocomplete="off" placeholder="Punto ${punto.num}...">
-      </div>
+      <input type="text" class="input-punto" data-idx="${i}" autocomplete="off" placeholder="Punto ${punto.num}...">
       <span class="stamp-mark" data-idx="${i}"></span>
     `;
     contenedor.appendChild(fila);
-  });
-
-  // Resaltado en vivo: colorea las letras acertadas mientras escribes
-  contenedor.querySelectorAll('.input-punto').forEach((input, idx) => {
-    const puntoReal = tema.indice[idx].texto;
-    const highlight = contenedor.querySelector(`.input-highlight[data-idx="${idx}"]`);
-    input.addEventListener('input', () => {
-      highlight.innerHTML = resaltarEnVivo(input.value, puntoReal);
-      highlight.scrollLeft = input.scrollLeft;
-    });
-    // Si el texto no cabe y el input hace scroll horizontal (con las flechas, etc.)
-    input.addEventListener('scroll', () => {
-      highlight.scrollLeft = input.scrollLeft;
-    });
   });
 
   // Enter avanza al siguiente renglón
@@ -168,27 +151,6 @@ function simplificar(texto) {
     .replace(/[^a-z0-9\s]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
-}
-
-function escapeHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// Normaliza un único carácter para comparar ignorando tildes y mayúsculas
-function normalizarChar(ch) {
-  return ch.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
-
-// Genera el HTML coloreado que se superpone sobre el input mientras escribes.
-// Compara carácter a carácter (por posición) contra el texto real.
-function resaltarEnVivo(valorUsuario, textoReal) {
-  let html = '';
-  for (let i = 0; i < valorUsuario.length; i++) {
-    const ch = valorUsuario[i];
-    const ok = i < textoReal.length && normalizarChar(ch) === normalizarChar(textoReal[i]);
-    html += `<span class="${ok ? 'letra-ok' : 'letra-bad'}">${escapeHtml(ch)}</span>`;
-  }
-  return html;
 }
 
 // Para las estadísticas agregadas: cuántas letras (sobre el texto simplificado) coinciden
