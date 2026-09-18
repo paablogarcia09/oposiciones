@@ -351,6 +351,77 @@ table.stats-table th {
 }
 .bar-fill.low { background: var(--ink-red); }
 
+.stats-rankings {
+  display: flex;
+  gap: 16px;
+  padding-left: 46px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.ranking-block {
+  flex: 1 1 220px;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid var(--card-edge);
+  border-radius: 4px;
+  padding: 12px 14px;
+}
+
+.ranking-block h4 {
+  margin: 0 0 8px;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.ranking-block ol {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.ranking-block li {
+  font-size: 0.85rem;
+  padding: 3px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rank-tema { flex: 1; }
+
+.rank-pct {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.rank-sub {
+  font-weight: 400;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+}
+
+.ranking-best .rank-pct { color: var(--ink-green); }
+.ranking-worst .rank-pct { color: var(--ink-red); }
+
+.pendientes {
+  margin: 16px 0 0 46px;
+  padding: 10px 14px;
+  border-left: 2px dashed var(--rule);
+}
+.pendientes h4 {
+  margin: 0 0 4px;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+.pendientes p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
 .stats-global {
   display: flex;
   gap: 24px;
@@ -373,9 +444,11 @@ table.stats-table th {
 @media (max-width: 480px) {
   .card { padding: 24px 16px 22px; }
   .card .rule-top, .card h3, .topic-toolbar, .topic-list, .btn-row,
-  .tema-titulo, .tema-meta, .renglones, .resumen, table.stats-table, .stats-global {
+  .tema-titulo, .tema-meta, .renglones, .resumen, table.stats-table, .stats-global,
+  .stats-rankings, .pendientes {
     margin-left: 0;
     padding-left: 26px;
   }
   table.stats-table { width: calc(100% - 26px); }
+  .ranking-block { flex-basis: 100%; }
 }

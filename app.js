@@ -60,8 +60,9 @@ function cargarCheckboxes() {
     const stats = statsDeTema(tema.id);
     let scoreHtml = '<span class="topic-score">sin practicar</span>';
     if (stats) {
-      const cls = stats.mejor_pct >= 70 ? '' : 'low';
-      scoreHtml = `<span class="topic-score ${cls}">mejor: ${stats.mejor_pct}%</span>`;
+      const media = mediaDeTema(stats);
+      const cls = media >= 70 ? '' : 'low';
+      scoreHtml = `<span class="topic-score ${cls}">media: ${media}%</span>`;
     }
 
     fila.innerHTML = `
@@ -249,43 +250,88 @@ document.getElementById('btn-stats').addEventListener('click', () => {
   document.getElementById('zona-estudio').classList.add('hidden');
 });
 
+// Media de las últimas marcas guardadas en el historial de un tema
+function mediaDeTema(s) {
+  if (!s.historial || s.historial.length === 0) return s.ultimo_pct;
+  const suma = s.historial.reduce((a, h) => a + h.pct, 0);
+  return Math.round(suma / s.historial.length);
+}
+
 function renderStats() {
   const stats = cargarStats();
   const temasConDatos = temas
-    .map(t => ({ tema: t, s: stats[t.id] }))
+    .map(t => ({ tema: t, s: stats[t.id], media: 0 }))
     .filter(x => x.s);
+  temasConDatos.forEach(x => { x.media = mediaDeTema(x.s); });
+
+  const temasSinDatos = temas.filter(t => !stats[t.id]);
 
   const globalEl = document.getElementById('stats-global');
+  const rankingsEl = document.getElementById('stats-rankings');
   const tablaEl = document.getElementById('stats-tabla');
+  const pendientesEl = document.getElementById('stats-pendientes');
 
   if (temasConDatos.length === 0) {
     globalEl.innerHTML = '';
+    rankingsEl.innerHTML = '';
     tablaEl.innerHTML = '<p style="padding-left:46px; color:#5c574c;">Todavía no has validado ningún índice.</p>';
+    pendientesEl.innerHTML = '';
     return;
   }
 
   const totalIntentos = temasConDatos.reduce((a, x) => a + x.s.intentos, 0);
-  const mediaMejor = Math.round(
-    temasConDatos.reduce((a, x) => a + x.s.mejor_pct, 0) / temasConDatos.length
+  const mediaGeneral = Math.round(
+    temasConDatos.reduce((a, x) => a + x.media, 0) / temasConDatos.length
   );
 
   globalEl.innerHTML = `
     <div><span class="num">${temasConDatos.length}</span><span class="lbl">temas practicados</span></div>
     <div><span class="num">${totalIntentos}</span><span class="lbl">intentos totales</span></div>
-    <div><span class="num">${mediaMejor}%</span><span class="lbl">media de mejores marcas</span></div>
+    <div><span class="num">${mediaGeneral}%</span><span class="lbl">media general</span></div>
   `;
 
+  // Rankings: temas mejor llevados y temas a repasar, según la media de sus intentos
+  if (temasConDatos.length >= 2) {
+    const porMedia = [...temasConDatos].sort((a, b) => b.media - a.media);
+    const n = Math.min(3, temasConDatos.length);
+    const mejores = porMedia.slice(0, n);
+    const peores = [...porMedia].reverse().slice(0, n);
+
+    const itemHtml = ({ tema, media, s }) => `
+      <li>
+        <span class="rank-tema">Tema ${tema.id}. ${tema.titulo}</span>
+        <span class="rank-pct">${media}%<span class="rank-sub"> · ${s.intentos} intento${s.intentos === 1 ? '' : 's'}</span></span>
+      </li>
+    `;
+
+    rankingsEl.innerHTML = `
+      <div class="stats-rankings">
+        <div class="ranking-block ranking-best">
+          <h4>🏆 Mejor llevados</h4>
+          <ol>${mejores.map(itemHtml).join('')}</ol>
+        </div>
+        <div class="ranking-block ranking-worst">
+          <h4>⚠️ A repasar</h4>
+          <ol>${peores.map(itemHtml).join('')}</ol>
+        </div>
+      </div>
+    `;
+  } else {
+    rankingsEl.innerHTML = '';
+  }
+
   const filas = temasConDatos
-    .sort((a, b) => a.s.mejor_pct - b.s.mejor_pct)
-    .map(({ tema, s }) => {
-      const cls = s.mejor_pct >= 70 ? '' : 'low';
+    .sort((a, b) => a.media - b.media)
+    .map(({ tema, s, media }) => {
+      const cls = media >= 70 ? '' : 'low';
       return `
         <tr>
           <td>Tema ${tema.id}. ${tema.titulo}</td>
           <td>${s.intentos}</td>
           <td>
-            <div class="bar-track"><div class="bar-fill ${cls}" style="width:${s.mejor_pct}%"></div></div>
+            <div class="bar-track"><div class="bar-fill ${cls}" style="width:${media}%"></div></div>
           </td>
+          <td>${media}%</td>
           <td>${s.mejor_pct}%</td>
         </tr>
       `;
@@ -295,11 +341,20 @@ function renderStats() {
   tablaEl.innerHTML = `
     <table class="stats-table">
       <thead>
-        <tr><th>Tema</th><th>Intentos</th><th>Mejor</th><th></th></tr>
+        <tr><th>Tema</th><th>Intentos</th><th></th><th>Media</th><th>Mejor</th></tr>
       </thead>
       <tbody>${filas}</tbody>
     </table>
   `;
+
+  pendientesEl.innerHTML = temasSinDatos.length > 0
+    ? `
+      <div class="pendientes">
+        <h4>📌 Aún sin practicar</h4>
+        <p>${temasSinDatos.map(t => `Tema ${t.id}. ${t.titulo}`).join(' · ')}</p>
+      </div>
+    `
+    : '';
 }
 
 document.getElementById('btn-reset-stats').addEventListener('click', () => {
