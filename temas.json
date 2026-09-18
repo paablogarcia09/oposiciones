@@ -61,22 +61,23 @@
       { "num": "6", "texto": "Árboles" },
       { "num": "6.1", "texto": "Definición" },
       { "num": "6.2", "texto": "Características y estructura" },
-      { "num": "6.3", "texto": "Tipos de árboles" },
-      { "num": "6.4", "texto": "Recorridos sobre un árbol" },
+      { "num": "6.3", "texto": "Tipos" },
+      { "num": "6.4", "texto": "Recorridos" },
       { "num": "6.5", "texto": "Otras operaciones sobre árboles" },
       { "num": "6.6", "texto": "Almacenamiento de un árbol" },
       { "num": "7", "texto": "Árboles binarios" },
       { "num": "7.1", "texto": "Definición" },
       { "num": "7.2", "texto": "Características" },
-      { "num": "7.3", "texto": "Árboles binarios completos" },
-      { "num": "7.4", "texto": "Conversión de un árbol general a un árbol binario" },
-      { "num": "7.5", "texto": "Representación de los árboles binarios" },
-      { "num": "7.6", "texto": "Recorridos" },
-      { "num": "7.7", "texto": "Árboles binarios de búsqueda" },
+      { "num": "7.3", "texto": "Estructura" },
+      { "num": "7.4", "texto": "Árboles binarios completos" },
+      { "num": "7.5", "texto": "Conversión de un árbol general a un árbol binario" },
+      { "num": "7.6", "texto": "Representación de los árboles binarios" },
+      { "num": "7.7", "texto": "Recorridos" },
+      { "num": "7.8", "texto": "Árboles binarios de búsqueda" },
       { "num": "8", "texto": "Grafos" },
       { "num": "8.1", "texto": "Definición" },
-      { "num": "8.2", "texto": "Tipos de grafos" },
-      { "num": "8.3", "texto": "Representación de los grafos" }
+      { "num": "8.2", "texto": "Tipos" },
+      { "num": "8.3", "texto": "Representación" }
     ]
   }
 ]
