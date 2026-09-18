@@ -70,7 +70,7 @@
       { "num": "7.2", "texto": "Características" },
       { "num": "7.3", "texto": "Estructura" },
       { "num": "7.4", "texto": "Árboles binarios completos" },
-      { "num": "7.5", "texto": "Conversión de un árbol general a un árbol binario" },
+      { "num": "7.5", "texto": "Conversión de un árbol general en árbol binario" },
       { "num": "7.6", "texto": "Representación de los árboles binarios" },
       { "num": "7.7", "texto": "Recorridos" },
       { "num": "7.8", "texto": "Árboles binarios de búsqueda" },
